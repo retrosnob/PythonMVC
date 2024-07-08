@@ -40,6 +40,8 @@ class Same_M(object):
             for y in range(rows)]
 
     def register_listener(self, listener):
+        #! The listener objects are functions defined in the View
+        #! and controller classes.
         self.listeners.append(listener)
 
     def notify(self, event_name, data):

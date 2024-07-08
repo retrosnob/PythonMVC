@@ -39,6 +39,10 @@ class Same_V(object):
         self.model = model
 
         # listen for model events
+        """
+        ! Here we pass a function to the model, which it can call
+        ! when it wants to notify us of an event.
+        """
         model.register_listener(self.model_event)
 
         # calculate each block size, and set our viewport size.
@@ -111,6 +115,7 @@ class Same_V(object):
         pygame.display.flip()
         self.clock.tick(FRAMERATE)
 
+    #! The model calls this function when it has an event to report
     def model_event(self, event_name, data):
         if event_name == "drop_cell":
             # data = [[from x, y], [to x, y]]
