@@ -96,7 +96,7 @@ class Same_V(object):
 
     def convert_mousepos(self, pos):
         """ convert window (x, y) coords into game field (row, col) values. """
-        return pos[1] / self.block_size, pos[0] / self.block_size
+        return int(pos[1] / self.block_size), int(pos[0] / self.block_size)
 
     def redraw(self):
         self.__draw_blocks()

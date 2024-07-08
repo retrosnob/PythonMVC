@@ -35,6 +35,7 @@ class Same_C(object):
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button:
                     row, col = self.view.convert_mousepos(event.pos)
+                    print(row, col)
                     if self.view.selection:
                         if self.view.selection[row][col]:
                             self.view.selection = None
