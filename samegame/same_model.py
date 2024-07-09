@@ -51,22 +51,36 @@ class Same_M(object):
     def get_neighbours(self, row, col):
         """
         Get a matrix of neighbor cells, and their neighbors.
+
+        ! This function creates a new matrix of the same size as the 
+        ! matrix used to represent the game. All cells in the matrix that
+        ! are of the same colour as the selected cell and in the same 
+        ! contiguous block are given a value of 1; all other cells are 
+        ! given the value 0.
+
+        ! Hence it's not just "get neighbours" but get all cells that should
+        ! be removed as a result of a click on the cell at row, col.
         """
 
         # do not select zero values
+        #! IE ignore it if the player selects a blank cell
         if self.matrix[row][col] == 0:
             return None
 
         # we use a local func to ease code reuse.
         def mark_hotspots(row, col, n_row, n_col):
             # test for a neighboring match
+            # ! This is just a flood fill
             if self.matrix[row][col] == self.matrix[n_row][n_col]:
                 # neighbor n_ equals in value
+                #! Equal value means same colour presumably
                 hotspot = (n_row, n_col)
                 # we use the tested list to avoid stacking
                 # the same cell twice
                 if not hotspot in tested:
                     # mark current cell as hot
+                    # ! "hot" means that it's a cell that needs to be removed
+                    # ! as a result of the original click
                     matches[n_row][n_col] = 1
                     # add this hotspot to the stack
                     # so it's neighbors get tested
@@ -86,6 +100,8 @@ class Same_M(object):
         # while there are cells to test for friendly neighbors
         while len(stack) > 0:
             # test the four cardinal points around this cell.
+            # ! Test them to check they're not off the edges of the matrix.
+            # ! The mark_hotspots function does the checking of the same colour.
             row, col = stack.pop()
             # west / left
             if (col > 0):
@@ -101,6 +117,9 @@ class Same_M(object):
                 mark_hotspots(row, col, row + 1, col)
         # this clever piece counts how many 1's in each matrix row,
         # then sums up the resulting list to get how many number 1's we have.
+        # ! This just checks that we have more than one cell, ie the user hasn't
+        # ! just clicked on a contiguous block of only one cell. (You need two 
+        # ! or more to remove the block.)
         if sum([row.count(1) for row in matches]) > 1:
             return matches
         else:
@@ -130,6 +149,8 @@ class Same_M(object):
                     self.matrix[r + 1][c] = self.matrix[r][c]
                     self.matrix[r][c] = 0
                     # tell any listeners
+                    # ! It's the fact that the view is notified after every
+                    # ! drop that makes the animation. 
                     self.notify('drop_cell', [[r, c], [r + 1, c]])
                     # move the counter down, essentially testing the cell
                     # we just dropped, but in its new position.

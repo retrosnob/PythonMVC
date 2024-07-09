@@ -35,16 +35,32 @@ class Same_C(object):
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button:
                     row, col = self.view.convert_mousepos(event.pos)
-                    print(row, col)
                     if self.view.selection:
+                        # ! If a selection exists...
                         if self.view.selection[row][col]:
+                            # ! and the user has clicked in the selection
                             self.view.selection = None
+                            # ! Misleading that the model's function is called
+                            # ! select_blocks because it's nothing to do with the
+                            # ! view's idea of a selection. It should be called 
+                            # ! something like make_move:
                             self.model.select_blocks(row, col)
                             print('score: %s ' % (self.model.score, ))
                         else:
+                            # ! Otherwise use the model's function to get the neighbours
+                            # ! and set the view's selection to these cells before 
+                            # ! redrawing. 
+                            # ! Note how the model doesn't actually respond to the fact 
+                            # ! that an initial selection has been made.
                             self.view.selection = (
                                     self.model.get_neighbours(row, col))
                     else:
+                        # ! Slightly clunky that this line is repeated. We need to set
+                        # ! the view's selection whether or not the click was in the 
+                        # ! current selection.
                         self.view.selection = (
                                     self.model.get_neighbours(row, col))
+                    # ! The view is asked to redraw. The model's state may have
+                    # ! changed (a move was confirmed) or it may not (a new
+                    # ! selection was made).
                     self.view.redraw()

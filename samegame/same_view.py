@@ -100,9 +100,14 @@ class Same_V(object):
 
     def convert_mousepos(self, pos):
         """ convert window (x, y) coords into game field (row, col) values. """
+        # ! Had to fix this line because it was return indexes as floats
         return int(pos[1] / self.block_size), int(pos[0] / self.block_size)
 
     def redraw(self):
+        """
+        ! This is called directly by the view after it has processed a mouse
+        ! click that constitutes a new selection. 
+        """
         self.__draw_blocks()
         self.__draw_selection()
 
@@ -120,6 +125,14 @@ class Same_V(object):
         if event_name == "drop_cell":
             # data = [[from x, y], [to x, y]]
             # draw each movement step for a basic drop animation.
+            """
+            ! The data parameter isn't actually used. The author presumably
+            ! originally decided to do the animation here, but in fact it is
+            ! achieved by the model raising a drop cell event every time it 
+            ! drops a cell and not just at the end of having dropped all the 
+            ! cells. So the view redraws the entire matrix even though a block
+            ! has only dropped by one.
+            """
             self.__draw_blocks()
             self.blit()
 

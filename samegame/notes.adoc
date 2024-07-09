@@ -1,0 +1,34 @@
+== The Model
+
+* Represents the game as a matrix.
+* Keeps the score.
+* Has no reference either to the model or view.
+* Notifies by calling functions that the model and view have passed to it.
+* Notifies each time a block drops by one, hence creating animation in view.
+* Is responsible for removing cells and shifting them down and left.
+* Receives but ignores clicks on empty squares.
+
+== The View
+
+* Initialises pygame, sets the screen size, maintains the clock.
+* Does NOT iterate through the pygame event queue.
+* Has functions to draw the blocks, draw the selection, blit.
+* Converts mouse click screen coordinates to matrix indexes.
+* Maintains a list of selected blocks, ie blocks that have been marked as contiguous and of the same colour as the block originally clicked on. The first time you click, the selection turns white. Clicking anywhere in that white selection confirms that you want to remove those blocks. Hence the program has to behave differently depending on whether a selection exists when the click takes place. If no selection exists, then the contiguous blocks are made white, if a selection does exist then the move is played and the blocks are removed. The model itself has no concept of the selection, but the controller does. This is a good example of something that the controller is responsible for but the model is not.
+* Interestingly the view is dumb, much like the model. It exposes functions that allow the screen to be changed, but it doesn't contain any logic of its own.
+* Redraws for two reaons:
+. The controller works out that a new selection is being made, in which the controller directly calls the view's redraw method.
+. The view receives an event from the model, indicating that a block has dropped.
+* I don't understand why the view calls blit in response to a model event but doesn't when its redraw method is called, but this might just be a pygame thing.
+
+== The Controller
+
+* Has the least code.
+* Iterates through the pygame event queue.
+* Has references to the model and the view.
+* Works out when it's right to tell the model to make a move (ie a view.selection already exists and the user has clicked a cell within the view.selection) or just to tell the view to draw the selection (ie when a view.selection doesn't exist or when a view.selection does exist but the user clicked a cell that wasn't in the view.selection). So the controller contains the logic to work out what needs to be done in response to mouse clicks. The view just passes the mouse click. 
+
+== Other notes
+
+* I like it how a function's helper functions are local to that function.
+This seems a very clear way to show the relationships between different parts of the code.
