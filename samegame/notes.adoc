@@ -3,6 +3,7 @@
 * Represents the game as a matrix.
 * Keeps the score.
 * Has no reference either to the model or view.
+* Allows other parts of the code to subscribe to its events by exposing a register method that accepts a function reference parameter and stores the reference in a list. 
 * Notifies by calling functions that the model and view have passed to it.
 * Notifies each time a block drops by one, hence creating animation in view.
 * Is responsible for removing cells and shifting them down and left.
@@ -19,7 +20,7 @@
 * Redraws for two reaons:
 . The controller works out that a new selection is being made, in which the controller directly calls the view's redraw method.
 . The view receives an event from the model, indicating that a block has dropped.
-* I don't understand why the view calls blit in response to a model event but doesn't when its redraw method is called, but this might just be a pygame thing.
+* I don't understand why the view calls blit in response to a model event but doesn't when its redraw method is called, but this might just be a pygame thing. Ah, wait. The main method calls view.blit after it's call to controller.process_input. Since the process_input always calls view.redraw as the last thing it does, we essentially call view.blit in response to model events and at the end of each check of the pygame event loop.
 
 == The Controller
 
