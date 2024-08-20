@@ -36,7 +36,7 @@ class C4_View(object):
         self.pixel_width = 420
         self.pixel_height = 360
         self.screen_size = self.pixel_width, self.pixel_height 
-        self.piece_radius = 0.4 * pixel_width / 7 # Piece diameter is 80% of grid cell size 
+        self.piece_radius = 0.4 * self.pixel_width / 7 # Piece diameter is 80% of grid cell size 
 
         # init pygame
         pygame.init()
@@ -64,7 +64,7 @@ class C4_View(object):
         # ! Had to fix this line because it was return indexes as floats
         return int(pos[1] / self.block_size), int(pos[0] / self.block_size)
 
-    def __redraw(self):
+    def redraw(self):
         """
         ! Called by the model event handler.
         """
@@ -75,8 +75,6 @@ class C4_View(object):
         # we blank the screen, we may draw a nice background later in time
         self.screen.fill(BG_COLOR)
         self.screen.blit(self.game_surf, (0, 0))
-        if self.selection:
-            self.screen.blit(self.select_surf, (0, 0))
         pygame.display.flip()
         self.clock.tick(FRAMERATE)
 
