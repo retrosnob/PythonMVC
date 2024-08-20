@@ -19,7 +19,7 @@ SELECTION_COLOR = WHITE
 
 
 class C4_View(object):
-    def __init__(self, pixel_width, pixel_height, model):
+    def __init__(self, model):
 
         # we may observe the model
         self.model = model

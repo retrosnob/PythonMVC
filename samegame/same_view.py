@@ -105,7 +105,7 @@ class Same_V(object):
 
     def redraw(self):
         """
-        ! This is called directly by the view after it has processed a mouse
+        ! This is called directly by the controller after it has processed a mouse
         ! click that constitutes a new selection. 
         """
         self.__draw_blocks()
