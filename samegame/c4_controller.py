@@ -25,12 +25,9 @@ class C4_Controller(object):
                     self.running = False
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    print("left mouse button")
-                elif event.button == 2:
-                    print("middle mouse button")
-                elif event.button == 3:
-                    print("right mouse button")
-                elif event.button == 4:
-                    print("mouse wheel up")
-                elif event.button == 5:
-                    print("mouse wheel down")
+                    if self.model.getstatus()["GAME OVER"]:
+                        print("Game over")
+                    else:
+                        print("Click at", event.pos)
+                        column = self.view.convert_mousepos(event.pos)
+                        self.model.makemove(column)

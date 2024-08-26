@@ -1,9 +1,18 @@
 # c4model.py
+from copy import deepcopy
 
 class C4_Model:
 
     def __init__(self):
         self.__currentplayer = 1
+        # self.__grid = [
+        #     [1,2,0,0,0,0,0],
+        #     [0,0,0,0,0,0,0],
+        #     [0,0,0,0,0,0,0],
+        #     [0,0,0,0,0,0,0],
+        #     [0,0,0,0,0,0,0],
+        #     [0,0,0,0,0,0,0],
+        # ]
         self.__grid = [
             [0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0],
@@ -23,7 +32,7 @@ class C4_Model:
         # Add the listener function to the list
         self.__listeners.append(listener)
 
-    def notify(self, event):
+    def __notify(self, event):
         # Pass the event to each listener
         for listener in self.__listeners:
             listener(event)
@@ -138,6 +147,9 @@ class C4_Model:
     
     def getstatus(self):
         return self.__status
+    
+    def getgrid(self):
+        return deepcopy(self.__grid)
 
 class ModelEvent:
     # A little object to wrap information about the event

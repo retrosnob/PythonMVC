@@ -40,7 +40,7 @@ class C4_View(object):
 
         # init pygame
         pygame.init()
-        pygame.display.set_caption('same game')
+        pygame.display.set_caption('Connect 4')
         self.screen = pygame.display.set_mode(self.screen_size)
         self.clock = pygame.time.Clock()
 
@@ -49,20 +49,33 @@ class C4_View(object):
         self.game_surf = pygame.Surface(self.screen_size)
         self.game_surf.set_colorkey(TRANSPARENT)
 
-        # draw selection regions on a surface to blit, too.
-        self.select_surf = pygame.Surface(self.screen_size)
-        self.select_surf.set_colorkey(TRANSPARENT)
+        self.redraw()
 
     def __draw_grid(self):
-        pass
+        for i in range(1, 7):
+            pygame.draw.line(self.game_surf, WHITE, (i * self.pixel_width // 7, 0), (i * self.pixel_width // 7, self.pixel_height), width=1)
+        for i in range(1, 6):
+            pygame.draw.line(self.game_surf, WHITE, (0, i * self.pixel_height // 6), (self.pixel_width, i * self.pixel_height // 6), width=1)
+            
 
     def __draw_pieces(self):
-        pass
+        def draw_piece(row, col, COLOUR):
+            x = col * self.pixel_width // 7 + self.pixel_width // 7 // 2
+            y = row * self.pixel_height // 6 + self.pixel_height // 6 // 2
+            pygame.draw.circle(self.game_surf, COLOUR, (x, y), self.piece_radius)
+        
+        grid = self.model.getgrid()[::-1]
+        for row in range(6):
+            for col in range(7):
+                if grid[row][col] == 1:
+                    draw_piece(row, col, RED)
+                elif grid[row][col] == 2:
+                    draw_piece(row, col, GREEN)
+        
 
     def convert_mousepos(self, pos):
-        """ convert window (x, y) coords into game field (row, col) values. """
-        # ! Had to fix this line because it was return indexes as floats
-        return int(pos[1] / self.block_size), int(pos[0] / self.block_size)
+        """ convert window (x, y) coords into board column value. """
+        return pos[0] // (self.pixel_width // 7)
 
     def redraw(self):
         """
@@ -79,7 +92,6 @@ class C4_View(object):
         self.clock.tick(FRAMERATE)
 
     #! The model calls this function when a move is made
-    def model_event(self, event_name, data):
-        if event_name == "THE NAME OF THE EVENT":
-            self.redraw()    
-            self.blit()
+    def model_event(self, event_name):
+        self.redraw()    
+        self.blit()

@@ -11,10 +11,10 @@ if __name__ == "__main__":
     view = c4_view.C4_View(model)
     controller = c4_controller.C4_Controller(model, view)
     view.redraw()
+    view.blit()
 
     while controller.running:
         controller.process_input()
-        view.blit()
 
 
 
