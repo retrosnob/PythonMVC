@@ -16,13 +16,14 @@ class C4_Model:
         self.__columncounts = [0,0,0,0,0,0,0]
         self.__status = {
             "GAME OVER" : False,
-            "WINNER" : None
+            "WINNER" : None,
+            "WINNING_LINE" : None
         }
         self.__listeners = []
 
     def register_listener(self, listener):
         # Add the listener function to the list
-        self.__listeners.append(listener)
+        self.__listeners.append(listener) 
 
     def __notify(self, event):
         # Pass the event to each listener
@@ -64,22 +65,24 @@ class C4_Model:
             return False
 
     def __horizontalwin(self):
-        for row in self.__grid:
-            for i in range(4):
-                if (row[i] != 0 and
-                    row[i] == row[i+1] and 
-                    row[i] == row[i+2] and 
-                    row[i] == row[i+3]):
+        for r, row in enumerate(self.__grid):
+            for c in range(4):
+                if (row[c] != 0 and
+                    row[c] == row[c+1] and 
+                    row[c] == row[c+2] and 
+                    row[c] == row[c+3]):
+                    self.__status["WINNING_LINE"] = ((r,c), (r,c+1), (r,c+2), (r,c+3))
                     return True
         return False
 
     def __verticalwin(self):
-        for col in range(7):
-            for row in range(3):
-                if (self.__grid[row][col] != 0 and
-                    self.__grid[row][col] == self.__grid[row+1][col] and
-                    self.__grid[row][col] == self.__grid[row+2][col] and
-                    self.__grid[row][col] == self.__grid[row+3][col]):
+        for c in range(7):
+            for r in range(3):
+                if (self.__grid[r][c] != 0 and
+                    self.__grid[r][c] == self.__grid[r+1][c] and
+                    self.__grid[r][c] == self.__grid[r+2][c] and
+                    self.__grid[r][c] == self.__grid[r+3][c]):
+                    self.__status["WINNING_LINE"] = ((r,c), (r+1,c), (r+2,c), (r+3,c))
                     return True
         return False
 
@@ -91,12 +94,13 @@ class C4_Model:
         # . \ \ \ \ \ \
         # . . \ \ \ \ \
         # . . . \ \ \ \
-        for row in range(3):
-            for col in range(4):
-                if (self.__grid[row][col] != 0 and
-                    self.__grid[row][col] == self.__grid[row+1][col+1] and
-                    self.__grid[row][col] == self.__grid[row+2][col+2] and
-                    self.__grid[row][col] == self.__grid[row+3][col+3]):
+        for r in range(3):
+            for c in range(4):
+                if (self.__grid[r][c] != 0 and
+                    self.__grid[r][c] == self.__grid[r+1][c+1] and
+                    self.__grid[r][c] == self.__grid[r+2][c+2] and
+                    self.__grid[r][c] == self.__grid[r+3][c+3]):
+                    self.__status["WINNING_LINE"] = ((r,c), (r+1,c+1), (r+2,c+2), (r+3,c+3))
                     return True
         
         # Bottom-left to Top-right
@@ -112,6 +116,7 @@ class C4_Model:
                     self.__grid[row][col] == self.__grid[row-1][col+1] and
                     self.__grid[row][col] == self.__grid[row-2][col+2] and
                     self.__grid[row][col] == self.__grid[row-3][col+3]):
+                    self.__status["WINNING_LINE"] = ((r,c), (r-1,c+1), (r-2,c+2), (r-3,c+3))
                     return True
         
         return False

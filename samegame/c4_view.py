@@ -12,6 +12,7 @@ RED = (255, 0, 0)
 GREEN = (0, 220, 0)
 BLUE = (0, 0, 220)
 PURPLE = (220, 0, 220)
+YELLOW = (255, 255, 0)
 COLORS = (BLACK, PURPLE, GREEN, BLUE)
 
 BG_COLOR = BLACK
@@ -59,20 +60,26 @@ class C4_View(object):
             
 
     def __draw_pieces(self):
-        def draw_piece(row, col, COLOUR):
-            x = col * self.pixel_width // 7 + self.pixel_width // 7 // 2
-            y = row * self.pixel_height // 6 + self.pixel_height // 6 // 2
-            pygame.draw.circle(self.game_surf, COLOUR, (x, y), self.piece_radius)
-        
-        grid = self.model.getgrid()[::-1]
+        # grid = self.model.getgrid()[::-1]
+        grid = self.model.getgrid()
         for row in range(6):
             for col in range(7):
                 if grid[row][col] == 1:
-                    draw_piece(row, col, RED)
+                    self.__draw_piece(5-row, col, RED)
                 elif grid[row][col] == 2:
-                    draw_piece(row, col, GREEN)
-        
+                    self.__draw_piece(5-row, col, GREEN)
+    
+    def __draw_piece(self, row, col, COLOUR, width = 0):
+        x = col * self.pixel_width // 7 + self.pixel_width // 7 // 2
+        y = row * self.pixel_height // 6 + self.pixel_height // 6 // 2
+        pygame.draw.circle(self.game_surf, COLOUR, (x, y), self.piece_radius, width)
 
+    def __draw_winning_line(self):
+        line = self.model.getstatus()["WINNING_LINE"]
+        for r, c in line:
+            print(r, c)
+            self.__draw_piece(5-r, c, YELLOW, 3)
+            
     def convert_mousepos(self, pos):
         """ convert window (x, y) coords into board column value. """
         return pos[0] // (self.pixel_width // 7)
@@ -83,6 +90,8 @@ class C4_View(object):
         """
         self.__draw_grid()
         self.__draw_pieces()
+        if self.model.getstatus()["WINNING_LINE"]:
+            self.__draw_winning_line()
 
     def blit(self):
         # we blank the screen, we may draw a nice background later in time
@@ -92,6 +101,12 @@ class C4_View(object):
         self.clock.tick(FRAMERATE)
 
     #! The model calls this function when a move is made
-    def model_event(self, event_name):
+    def model_event(self, event):
+        if event.message == "RESULT":
+            print("Game over")
+            if self.model.getstatus()["WINNER"]:
+                print(self.model.getstatus()["WINNER"])
+            else:
+                print("Draw")
         self.redraw()    
         self.blit()
