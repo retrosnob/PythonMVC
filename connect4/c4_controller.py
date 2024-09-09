@@ -26,7 +26,7 @@ class C4_Controller(object):
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.model.getstatus()["GAME OVER"]:
-                        pass
+                        pass # Ignore clicks if game is over
                     else:
                         print("Click at", event.pos)
                         column = self.view.convert_mousepos(event.pos)

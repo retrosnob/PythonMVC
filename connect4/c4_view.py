@@ -77,7 +77,6 @@ class C4_View(object):
     def __draw_winning_line(self):
         line = self.model.getstatus()["WINNING_LINE"]
         for r, c in line:
-            print(r, c)
             self.__draw_piece(5-r, c, YELLOW, 3)
             
     def convert_mousepos(self, pos):
