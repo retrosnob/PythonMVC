@@ -9,6 +9,7 @@ from pygame.locals import *
 from c4_model import C4_Model
 from c4_view import C4_View
 
+# Isn't Git great?!
 
 class C4_Controller(object):
     def __init__(self, model, view):
