@@ -5,11 +5,6 @@ class C4_Model:
 
     def __init__(self):
         self.__board = Board()
-        self.__status = {
-            "GAME OVER" : False,
-            "WINNER" : None,
-            "WINNING_LINE" : None
-        }
         self.__listeners = []
 
     def register_listener(self, listener):
@@ -45,47 +40,28 @@ class C4_Model:
         Args:
             column (int): The column where the move is being played.
         """        
-        if not self.__board.islegalmove(column) or self.__status["GAME OVER"]:
+        if not self.__board.islegalmove(column) or self.__board.getstate("GAME OVER"):
             # Ignore if input is invalid or game is over.
             return
         else:
             # Update the game grid and status
             self.__board.pushmove(column)
-            self.__updatestatus()
             # Notify listeners that a move has been mode
             self.__notify(ModelEvent("MOVE"))
+            if self.__board.getstate("GAME OVER"):
+                self.__notify(ModelEvent("RESULT"))
     
-    def __updatestatus(self):
-        # Must check for win before checking for draw
-        if self.__board.gamewon():
-            self.__status["GAME OVER"] = True
-            self.__status["WINNER"] = self.__board.getcurrentplayer()
-            self.__status["WINNING_LINE"] = self.__board.getwinningline()
-            self.__notify(ModelEvent("RESULT"))
-        elif self.__board.gridfull():
-            # Means draw if no winner
-            self.__status["GAME OVER"] = True
-            self.__notify(ModelEvent("RESULT"))
-
-    def print(self):
-        # This function is for testing only        
-        for row in self.__grid[::-1]:
-            print(self.__getrowasstring(row))
-
-    def __getrowasstring(self, row):
-        returnstring = ''
-        for value in row:
-            if value == 0:
-                returnstring += "."    
-            else:
-                returnstring += str(value)
-        return returnstring
-    
-    def getstatus(self):
-        return self.__status
+    def getstate(self, statusstring):
+        return self.__board.getstate(statusstring)
     
     def getgrid(self):
         return self.__board.getgrid()    
+    
+    def getcurrentplayer(self):
+        return self.__board.getcurrentplayer()
+    
+    def getboardcopy(self):
+        return deepcopy(self.__board)
 
 class ModelEvent:
     # A little object to wrap information about the event
@@ -104,7 +80,21 @@ class Board:
             [0,0,0,0,0,0,0],
         ]
         self.__columncounts = [0,0,0,0,0,0,0]        
-        self.__winningline = None
+        self.__state = {
+            "GAME OVER" : False,
+            "WINNER" : None,
+            "WINNING_LINE" : None
+        }        
+
+    def __updatestate(self):
+        # Must check for win before checking for draw
+        if self.gamewon():
+            self.__state["GAME OVER"] = True
+            self.__state["WINNER"] = self.getcurrentplayer()
+            self.__state["WINNING_LINE"] = self.getwinningline()
+        elif self.gridfull():
+            # Means draw if no winner
+            self.__state["GAME OVER"] = True
 
     def __horizontalwin(self):
         for r, row in enumerate(self.__grid):
@@ -198,12 +188,22 @@ class Board:
             self.__grid[row][column] = self.__currentplayer
             self.__columncounts[column] += 1
             self.__togglecurrentplayer()   
+            self.__updatestate()
 
     def popmove(self, column):
-        pass
+        if self.__grid[0][column] == 0:
+            raise ValueError("There is no piece in this column to pop!")
+        elif self.__grid[5][column] != 0:
+            # The column is full so it must be the top piece to remove
+            self.__grid[5][column] = 0
+        else:
+            for row in range(1, 5):
+                if self.__grid[row][column] == 0:
+                    self.__grid[row-1][column] = 0
         # Remove the top piece from the column (set to 0)
-        # Adjust column counts
+        self.__columncounts[column] -= 1
         # toggle player
+        self.__togglecurrentplayer()
  
     def getgrid(self):
         return deepcopy(self.__grid)        
@@ -223,3 +223,20 @@ class Board:
     
     def getcurrentplayer(self):
         return self.__currentplayer
+    
+    def getstate(self, property):
+        return self.__state[property]
+    
+    def print(self):
+        # This function is for testing only        
+        for row in self.__grid[::-1]:
+            print(self.__getrowasstring(row))
+
+    def __getrowasstring(self, row):
+        returnstring = ''
+        for value in row:
+            if value == 0:
+                returnstring += "."    
+            else:
+                returnstring += str(value)
+        return returnstring    

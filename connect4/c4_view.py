@@ -75,7 +75,7 @@ class C4_View(object):
         pygame.draw.circle(self.game_surf, COLOUR, (x, y), self.piece_radius, width)
 
     def __draw_winning_line(self):
-        line = self.model.getstatus()["WINNING_LINE"]
+        line = self.model.getstate("WINNING_LINE")
         for r, c in line:
             self.__draw_piece(5-r, c, YELLOW, 3)
             
@@ -89,7 +89,7 @@ class C4_View(object):
         """
         self.__draw_grid()
         self.__draw_pieces()
-        if self.model.getstatus()["WINNING_LINE"]:
+        if self.model.getstate("WINNING_LINE"):
             self.__draw_winning_line()
 
     def blit(self):
@@ -102,9 +102,8 @@ class C4_View(object):
     #! The model calls this function when a move is made
     def model_event(self, event):
         if event.message == "RESULT":
-            print("Game over")
-            if self.model.getstatus()["WINNER"]:
-                print(self.model.getstatus()["WINNER"])
+            if self.model.getstate("WINNER"):
+                print(self.model.getstate("WINNER"))
             else:
                 print("Draw")
         self.redraw()    
