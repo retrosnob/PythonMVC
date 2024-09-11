@@ -121,9 +121,9 @@ class MinimaxPlayer():
                 # We don't use the player whose turn it is.
                 score = self.minimax(depth+1, max_depth, maximising_player)
                 # ***********
-                print(f'player before pop: {self.board.getcurrentplayer()}')
+                # print(f'player before pop: {self.board.getcurrentplayer()}')
                 self.board.popmove(move)
-                print(f'player after pop: {self.board.getcurrentplayer()}')
+                # print(f'player after pop: {self.board.getcurrentplayer()}')
                 if depth == 0:
                     print(f'Candidate move: {move}, score: {score}')
                 if maximising_player == currentplayer:
