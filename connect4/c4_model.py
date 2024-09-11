@@ -187,8 +187,8 @@ class Board:
             row = self.__columncounts[column]
             self.__grid[row][column] = self.__currentplayer
             self.__columncounts[column] += 1
+            self.__updatestate() # Important to update state before toggling player
             self.__togglecurrentplayer()   
-            self.__updatestate()
 
     def popmove(self, column):
         if self.__grid[0][column] == 0:
