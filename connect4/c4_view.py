@@ -19,7 +19,7 @@ BG_COLOR = BLACK
 SELECTION_COLOR = WHITE
 
 
-class C4_View(object):
+class C4_View:
     def __init__(self, model):
 
         # we may observe the model
