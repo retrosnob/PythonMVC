@@ -88,54 +88,42 @@ class MinimaxPlayer():
         currentplayer = self.board.getcurrentplayer()
         if self.board.getstate('GAME OVER'): 
             if not self.board.getstate('WINNER'): 
-                # print(depth, ":draw")
                 # Draw
                 # Return static draw evaluation
                 evaluation = 0
                 return evaluation
             else:
-                # print(f'{depth}: {currentplayer} wins')
                 # Win
                 # Return static win evaluation
                 evaluation = 999 if maximising_player == self.board.getstate('WINNER') else -999
                 return evaluation
         elif depth == max_depth:
-            # print(f'{depth}: max depth reached')
             # Game is not over and depth is reached
             # Return static position evaluation
             # Note that we always evaluate from the pov of the maximising player
             # so that a negative score is good for the minimiser.
             evaluation = self.evaluate(maximising_player)
-            print(f'Evaluation: {evaluation}')
             return evaluation
         else:
             # Game is not over and depth not reached so make next recursive minimax call
             moves = self.board.getlegalmoves()
             bestscore = -float('inf') if maximising_player == currentplayer else float('inf')
             for move in moves:
-                print(f'player before push: {self.board.getcurrentplayer()}')
                 self.board.pushmove(move)
-                print(f'player after push: {self.board.getcurrentplayer()}')
                 # ***********
                 # Note that we keep the maximising_player from the original call.
                 # We don't use the player whose turn it is.
                 score = self.minimax(depth+1, max_depth, maximising_player)
                 # ***********
-                # print(f'player before pop: {self.board.getcurrentplayer()}')
                 self.board.popmove(move)
-                # print(f'player after pop: {self.board.getcurrentplayer()}')
-                if depth == 0:
-                    print(f'Candidate move: {move}, score: {score}')
                 if maximising_player == currentplayer:
                     if score > bestscore:
                         bestscore = score
                         if depth == 0:
                             self.best_move = move
-                            # print('best move for maximizer')
                 else:
                     if score < bestscore:
                         bestscore = score
                         if depth == 0:
                             self.best_move = move
-                            # print('best move for minimizer')
             return bestscore

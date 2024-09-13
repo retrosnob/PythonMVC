@@ -80,11 +80,14 @@ class Board:
             [0,0,0,0,0,0,0],
         ]
         self.__columncounts = [0,0,0,0,0,0,0]        
+        self.__reset_state()
+
+    def __reset_state(self):
         self.__state = {
             "GAME OVER" : False,
             "WINNER" : None,
             "WINNING_LINE" : None
-        }        
+        }                        
 
     def __updatestate(self):
         # Must check for win before checking for draw
@@ -197,11 +200,13 @@ class Board:
             # The column is full so it must be the top piece to remove
             self.__grid[5][column] = 0
         else:
-            for row in range(1, 5):
+            for row in range(1, 6):
                 if self.__grid[row][column] == 0:
                     self.__grid[row-1][column] = 0
         # Remove the top piece from the column (set to 0)
         self.__columncounts[column] -= 1
+        # Reset the state in case a winner was set by the popped move
+        self.__reset_state()
         # toggle player
         self.__togglecurrentplayer()
  
