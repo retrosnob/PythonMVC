@@ -31,7 +31,7 @@ class MinimaxPlayer():
         self.callback = callback
 
     def get_move(self):
-        self.minimax(0, 3, self.board.getcurrentplayer())
+        self.minimax(0, 5, self.board.getcurrentplayer())
         self.callback(self.best_move)
 
     def evaluate(self, turn) -> float:
