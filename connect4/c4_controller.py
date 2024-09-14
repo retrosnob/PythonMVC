@@ -11,9 +11,7 @@ from c4_model import C4_Model
 from c4_view import C4_View
 from c4_cpuplayer import RandomPlayer, MinimaxPlayer
 
-# Isn't Git great?!
-
-class C4_Controller(object):
+class C4_Controller:
     def __init__(self, model, view):
         self.model = model
         self.view = view
@@ -28,7 +26,6 @@ class C4_Controller(object):
                     self.running = False
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    # print(threading.active_count())
                     if self.model.getstate("GAME OVER"):
                         pass # Ignore clicks if game is over
                     else:

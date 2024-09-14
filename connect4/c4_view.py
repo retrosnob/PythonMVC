@@ -93,7 +93,7 @@ class C4_View:
             self.__draw_winning_line()
 
     def blit(self):
-        # we blank the screen, we may draw a nice background later in time
+        # Blank the screen and draw the surface
         self.screen.fill(BG_COLOR)
         self.screen.blit(self.game_surf, (0, 0))
         pygame.display.flip()
