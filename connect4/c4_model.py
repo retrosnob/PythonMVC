@@ -145,12 +145,12 @@ class Board:
         # x x x x / / .
         # x x x x / . .
         # x x x x . . .
-        for row in range(3, 6):
-            for col in range(4):
-                if (self.__grid[row][col] != 0 and
-                    self.__grid[row][col] == self.__grid[row-1][col+1] and
-                    self.__grid[row][col] == self.__grid[row-2][col+2] and
-                    self.__grid[row][col] == self.__grid[row-3][col+3]):
+        for r in range(3, 6):
+            for c in range(4):
+                if (self.__grid[r][c] != 0 and
+                    self.__grid[r][c] == self.__grid[r-1][c+1] and
+                    self.__grid[r][c] == self.__grid[r-2][c+2] and
+                    self.__grid[r][c] == self.__grid[r-3][c+3]):
                     self.__winningline = ((r,c), (r-1,c+1), (r-2,c+2), (r-3,c+3))
                     return True
         
@@ -165,6 +165,9 @@ class Board:
     
     def gamewon(self):
         if self.__horizontalwin() or self.__verticalwin() or self.__diagonalwin():
+            # print(self.__winningline)
+            # for x, y in self.__winningline:
+            #     print(x,y)
             return True
         else:
             return False    
