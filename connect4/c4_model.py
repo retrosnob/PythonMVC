@@ -12,21 +12,22 @@ class C4_Model:
         """Allows other objects to listen to model events.
 
         The other object calls this function, passing in a function
-        of their own, which is called when the model's notify 
-        function is run. In this way, the model can notify other
-        objects of things that have happened that they might want
-        to respond to, e.g. updating the screen.
+        of their own, which is called by the model when the model's 
+        notify function is run. In this way, the model can notify 
+        other objects of things that have happened that they might 
+        want to respond to, e.g. updating the screen, without the 
+        model needing to keep a direct reference to those other objects.
 
         Args:
             listener (function): The listener function.
         """        
-        # Add the listener function to the list
+        # Add the listener function to the list.
         self.__listeners.append(listener) 
 
     def __notify(self, event):
         """Notifies other objects by calling their listener functions.
 
-        Loops through the list of listener functions, passing  the event
+        Loops through the list of listener functions, passing the event
         to each of them.
 
         Args:
