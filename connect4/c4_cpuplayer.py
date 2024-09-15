@@ -1,23 +1,11 @@
-"""
-Need to be able to 
-
-push and pop moves
-evaluate the board
-see whose move it is
-get all legal moves
-
-We don't want to duplicate functions that are already defined in the model.
-Perhaps we abstract shared functions out into a separate class. Otherwise
-we pass the cpuplayer's representation of the board back to the model for 
-evaluation, etc.
-"""
+# c4_cpuplayer.py 
 
 class RandomPlayer:
     def __init__(self, board, callback):
         self.board = board
         self.callback = callback
 
-    def get_move(self):
+    def calculate_move(self):
         from random import choice
         from time import sleep
         sleep(2)
@@ -30,7 +18,7 @@ class MinimaxPlayer():
         self.board = board
         self.callback = callback
 
-    def get_move(self):
+    def calculate_move(self):
         self.minimax(0, 5, self.board.getcurrentplayer())
         self.callback(self.best_move)
 
@@ -80,11 +68,10 @@ class MinimaxPlayer():
                 score1 += table[i]
             elif grid[i] == him:
                 score2 += table[i]
-        # Positive is good for the player represented by the turn argument
+        # Positive is good for the player represented by the turn argument.
         return score1 - score2 
 
     def minimax(self, depth: int, max_depth: int, maximising_player: int) -> float:
-        # self.board.print()
         currentplayer = self.board.getcurrentplayer()
         if self.board.getstate('GAME OVER'): 
             if not self.board.getstate('WINNER'): 
@@ -98,14 +85,14 @@ class MinimaxPlayer():
                 evaluation = 999 if maximising_player == self.board.getstate('WINNER') else -999
                 return evaluation
         elif depth == max_depth:
-            # Game is not over and depth is reached
-            # Return static position evaluation
+            # Game is not over but max depth is reached.
+            # Return static position evaluation.
             # Note that we always evaluate from the pov of the maximising player
             # so that a negative score is good for the minimiser.
             evaluation = self.evaluate(maximising_player)
             return evaluation
         else:
-            # Game is not over and depth not reached so make next recursive minimax call
+            # Game is not over and depth not reached so make next recursive minimax call.
             moves = self.board.getlegalmoves()
             bestscore = -float('inf') if maximising_player == currentplayer else float('inf')
             for move in moves:
@@ -120,6 +107,9 @@ class MinimaxPlayer():
                     if score > bestscore:
                         bestscore = score
                         if depth == 0:
+                            # Minimax has to return the score, but in the end we want the move, so 
+                            # when we're at depth = 0 (just about to finish), take a note of the move
+                            # that led to the best score.
                             self.best_move = move
                 else:
                     if score < bestscore:

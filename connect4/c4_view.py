@@ -1,7 +1,6 @@
 
 import pygame
 from pygame.locals import *
-from c4_model import C4_Model
 
 FRAMERATE = 60
 
@@ -16,51 +15,51 @@ YELLOW = (255, 255, 0)
 COLORS = (BLACK, PURPLE, GREEN, BLUE)
 
 BG_COLOR = BLACK
-SELECTION_COLOR = WHITE
-
 
 class C4_View:
     def __init__(self, model):
 
-        # we may observe the model
+        # We need to keep a reference to the model so we can get the grid.
         self.model = model
 
-        # listen for model events
-        """
-        ! Here we pass a function to the model, which it can call
-        ! when it wants to notify us of an event.
-        """
+        # Pass a function to the model that it can call when it wants us to update the screen.
         model.register_listener(self.model_event)
 
-        # calculate each piece size, and set our viewport size.
-        # Set width and height in ratio 7 : 6
+        # Calculate each piece size, and set the screen size.
+        # Set width and height in ratio 7 : 6, the same as a Connect 4 board.
         self.pixel_width = 420
         self.pixel_height = 360
         self.screen_size = self.pixel_width, self.pixel_height 
         self.piece_radius = 0.4 * self.pixel_width / 7 # Piece diameter is 80% of grid cell size 
 
-        # init pygame
+        # Initialise pygame.
         pygame.init()
         pygame.display.set_caption('Connect 4')
         self.screen = pygame.display.set_mode(self.screen_size)
         self.clock = pygame.time.Clock()
 
-        # draw game widgets on a surface to blit on screen
-        # so we dont re-loop inside the screen update.
+        # Create the surface to draw on.
+        # We will draw to a surface and then blit it all at once.
         self.game_surf = pygame.Surface(self.screen_size)
         self.game_surf.set_colorkey(TRANSPARENT)
 
-        self.redraw()
+        # Draw the starting position.
+        self.draw()
 
     def __draw_grid(self):
+        # Draw the lines. Just requires a little arithmetic.
+        
+        # Vertical lines.
         for i in range(1, 7):
             pygame.draw.line(self.game_surf, WHITE, (i * self.pixel_width // 7, 0), (i * self.pixel_width // 7, self.pixel_height), width=1)
+        
+        # Horizontal lines.
         for i in range(1, 6):
             pygame.draw.line(self.game_surf, WHITE, (0, i * self.pixel_height // 6), (self.pixel_width, i * self.pixel_height // 6), width=1)
             
 
     def __draw_pieces(self):
-        # grid = self.model.getgrid()[::-1]
+        # Get the current grid from the model.
         grid = self.model.getgrid()
         for row in range(6):
             for col in range(7):
@@ -70,30 +69,31 @@ class C4_View:
                     self.__draw_piece(5-row, col, GREEN)
     
     def __draw_piece(self, row, col, COLOUR, width = 0):
+        # Calculates the pixel coordinates on the screen from the index of the piece in the grid.
         x = col * self.pixel_width // 7 + self.pixel_width // 7 // 2
         y = row * self.pixel_height // 6 + self.pixel_height // 6 // 2
         pygame.draw.circle(self.game_surf, COLOUR, (x, y), self.piece_radius, width)
 
     def __draw_winning_line(self):
+        # Highlight the winning line. Only gets called (by the draw function) when someone has won the game.
         line = self.model.getstate("WINNING_LINE")
         for r, c in line:
             self.__draw_piece(5-r, c, YELLOW, 3)
             
     def convert_mousepos(self, pos):
-        """ convert window (x, y) coords into board column value. """
+        # Convert the x coordinate of a click to a column number of the grid.
         return pos[0] // (self.pixel_width // 7)
 
-    def redraw(self):
-        """
-        ! Called by the model event handler.
-        """
+    def draw(self):
+        # Draw the grid and the pieces (and the winning line if there is one) to the surface and blit it.
         self.__draw_grid()
         self.__draw_pieces()
         if self.model.getstate("WINNING_LINE"):
             self.__draw_winning_line()
+        self.__blit()
 
-    def blit(self):
-        # Blank the screen and draw the surface
+    def __blit(self):
+        # Blank the screen and then draw the surface to the screen.
         self.screen.fill(BG_COLOR)
         self.screen.blit(self.game_surf, (0, 0))
         pygame.display.flip()
@@ -101,10 +101,10 @@ class C4_View:
 
     #! The model calls this function when a move is made
     def model_event(self, event):
+        # Check the event type and then (re-)draw the screen.
         if event.message == "RESULT":
             if self.model.getstate("WINNER"):
                 print(self.model.getstate("WINNER"))
             else:
                 print("Draw")
-        self.redraw()    
-        self.blit()
+        self.draw()    
